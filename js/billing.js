@@ -28,5 +28,22 @@
     return date.toLocaleDateString('en-US', options);
   }
 
-  Breezy.billing = { firstChargeDate, formatDate };
+  /**
+   * A new Date n calendar months after date, clamped to the last day of the target month.
+   * Keeps the time of day and does not mutate date.
+   * @param {Date} date
+   * @param {number} n
+   * @returns {Date}
+   */
+  function addMonths(date, n) {
+    const result = new Date(date.getTime());
+    const day = result.getDate();
+    result.setDate(1);
+    result.setMonth(result.getMonth() + n);
+    const daysInMonth = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+    result.setDate(Math.min(day, daysInMonth));
+    return result;
+  }
+
+  Breezy.billing = { firstChargeDate, formatDate, addMonths };
 })();

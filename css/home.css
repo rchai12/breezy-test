@@ -449,3 +449,61 @@ footer a:hover { color: var(--sky-400); }
   .nl-form { flex-direction: column; }
   .stats-grid { gap: 32px; }
 }
+
+.account-slot:empty {
+  display: none;
+}
+
+.mid-links .account-chip,
+.mobile-menu .account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 6px 12px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-transform: none;
+  text-decoration: none;
+}
+
+.mid-links .account-chip:hover,
+.mobile-menu .account-chip:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.account-chip-name {
+  overflow: hidden;
+  max-width: 16ch;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-tier-badge {
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--sky-500), var(--violet-500));
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.account-slot--mobile {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.account-slot--mobile .account-chip {
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+}

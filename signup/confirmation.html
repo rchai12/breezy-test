@@ -14,6 +14,7 @@
 <script defer src="../js/validation.js"></script>
 <script defer src="../js/flow-state.js"></script>
 <script defer src="../js/mock-api.js"></script>
+<script defer src="../js/components/breath-overlay.js"></script>
 <script defer src="../js/pages/confirmation.js"></script>
 </head>
 <body>
@@ -30,10 +31,32 @@
       Your browser is blocking storage for local files, so progress won't carry between pages.
       See the README for how to run the site with a local server.
     </div>
-    <section class="signup-card" aria-labelledby="step-title">
-      <h1 id="step-title">You're all set</h1>
-      <p>Confirmation coming in Phase 5.</p>
+    <section class="signup-card confirmation" aria-labelledby="step-title">
+      <h1 id="step-title">You're all set. Inhale.</h1>
+      <p class="welcome-line"></p>
+      <dl class="subscription-summary"></dl>
+      <h2 class="next-title">What happens next</h2>
+      <ol class="next-steps">
+        <li>Enjoy a breath of air with every breath.</li>
+        <li>Please do not email us.</li>
+        <li>Thank you for your donation.</li>
+      </ol>
+      <div class="confirmation-actions">
+        <a class="btn btn-primary" href="../breezy-intern-test.html">Back to Breezy</a>
+        <button type="button" class="link-button" id="cancelBtn">Cancel subscription</button>
+      </div>
     </section>
+    <dialog class="cancel-dialog" id="cancelDialog" aria-labelledby="cancel-title">
+      <h2 id="cancel-title">Cancel your subscription</h2>
+      <p>We're sorry to see you exhale. To cancel, please complete these steps:</p>
+      <ol>
+        <li>Fill out our 23-page cancellation form.</li>
+        <li>Attend an exit interview with our Air Retention Specialist.</li>
+        <li>Solve a CAPTCHA that is actually a lung capacity test.</li>
+      </ol>
+      <p class="dialog-note">Your subscription has not been changed.</p>
+      <button type="button" class="btn btn-primary" id="cancelContinue">Continue</button>
+    </dialog>
   </main>
 </body>
 </html>

@@ -209,6 +209,28 @@ for (const size of [
   });
 }
 
+for (const width of [360, 768, 1280]) {
+  test(`open confirmation dialog does not scroll horizontally at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await seedFlow(page, READY);
+    await page.goto(fileUrl('signup/confirmation.html'));
+    await page.locator('#cancelBtn').click();
+    await expect(page.locator('#cancelDialog')).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
+
+for (const width of [360, 1280]) {
+  test(`signed-in homepage does not scroll horizontally at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await seedFlow(page, READY);
+    await page.goto(fileUrl('breezy-intern-test.html'));
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
+
 test('plans page keeps the cards in one row at 1280px', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(fileUrl('signup/plans.html', '?plan=power'));

@@ -29,7 +29,7 @@ const PAGES = [
     path: 'signup/confirmation.html',
     seed: { subscription: SAMPLE.subscription },
     title: "You're all set · Breezy",
-    heading: "You're all set",
+    heading: "You're all set. Inhale.",
     current: 'Done',
     complete: ['Plan', 'Account', 'Payment'],
   },

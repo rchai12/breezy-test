@@ -8,7 +8,7 @@ Breezy TM logo at top left does not reroute to homepage, a function typical in m
 
 Code Inspection:
 
-The toggleFaq function fails because it strictly only opens the answer. No functionality for closing or toggling. Changing from .add('open') to .toggle('open') could fix issue for closing expanded toggles. But it doesn't fix the issue where previously expanded questions do not close when expanding new questions. A listener needs to be put in place, so the faq is aware when a question is open.
+The toggleFaq function fails because it strictly only opens the answer. No functionality for closing or toggling. Changing from .add('open') to .toggle('open') could fix issue for closing expanded toggles. But it doesn't fix the issue where previously expanded questions do not close when expanding new questions. A listener could be put in place, so the faq is aware when a question is open. An easier way was to use the querySelectorAll to check which questions were open, and then close them all, before expanding for the new question. It also works for existing opened questions, to close them on click, because it captures the state of the question, closes all open questions, then checks that the state was open, so it doesn't reopen the question.
 
 Faq Fix:
 
