@@ -153,4 +153,4 @@ Please see notes.md, /Coding_agents/claude and /Coding_Agents/cursor for transcr
 - The real story video.
 - Homepage pricing buttons that recognize existing subscribers.
 - Account management, meaning email, password and subscription management.
-- UI/UX could use some work. It's "fine", but it doesn't have much draw. Some stuff could be more better aligned/fit, like Create your account page.
+- UI/UX could use some work. It's "fine", but it doesn't have much draw. Some stuff could be better aligned/fit, like Create your account page.
