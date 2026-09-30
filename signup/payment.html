@@ -10,9 +10,12 @@
 <link rel="stylesheet" href="../css/signup.css">
 <script defer src="../js/plans-data.js"></script>
 <script defer src="../js/billing.js"></script>
+<script defer src="../js/card-format.js"></script>
 <script defer src="../js/validation.js"></script>
 <script defer src="../js/flow-state.js"></script>
 <script defer src="../js/mock-api.js"></script>
+<script defer src="../js/components/form-field.js"></script>
+<script defer src="../js/components/masked-input.js"></script>
 <script defer src="../js/pages/payment.js"></script>
 </head>
 <body>
@@ -24,14 +27,62 @@
       <li class="is-complete">Plan</li><li class="is-complete">Account</li><li aria-current="step">Payment</li><li>Done</li>
     </ol>
   </nav>
-  <main class="signup-main">
+  <main class="signup-main signup-main--wide">
     <div class="storage-warning" role="status" hidden>
       Your browser is blocking storage for local files, so progress won't carry between pages.
       See the README for how to run the site with a local server.
     </div>
-    <section class="signup-card" aria-labelledby="step-title">
-      <h1 id="step-title">Payment details</h1>
-      <p>Payment form coming in Phase 4.</p>
+    <section class="signup-card payment-layout" aria-labelledby="step-title">
+      <div class="payment-main">
+        <h1 id="step-title">Payment details</h1>
+        <div class="demo-banner" role="note">
+          <p><strong>Demo only.</strong> No real payment is taken. Use a test card.</p>
+          <button type="button" class="btn btn-secondary btn-small" id="fillTestCard">Use test card</button>
+        </div>
+        <p class="paying-as"></p>
+        <form class="payment-form" novalidate>
+          <div class="form-field">
+            <label for="cardName">Name on card</label>
+            <input id="cardName" name="cardName" autocomplete="cc-name" required>
+            <p class="field-error" id="cardName-error" aria-live="polite"></p>
+          </div>
+          <div class="form-field">
+            <label for="cardNumber">Card number</label>
+            <input id="cardNumber" name="cardNumber" inputmode="numeric" autocomplete="cc-number" required aria-describedby="card-brands">
+            <div class="card-brands" id="card-brands">
+              <span class="visually-hidden">We accept</span>
+              <img src="../assets/card-brands/visa.svg" alt="Visa" width="40" height="26" data-brand="visa">
+              <img src="../assets/card-brands/mastercard.svg" alt="Mastercard" width="40" height="26" data-brand="mastercard">
+              <img src="../assets/card-brands/amex.svg" alt="American Express" width="40" height="26" data-brand="amex">
+              <img src="../assets/card-brands/discover.svg" alt="Discover" width="40" height="26" data-brand="discover">
+              <span class="visually-hidden card-brand-status" aria-live="polite"></span>
+            </div>
+            <p class="field-error" id="cardNumber-error" aria-live="polite"></p>
+          </div>
+          <div class="form-row form-row--three">
+            <div class="form-field">
+              <label for="cardExpiry">Expiry <span class="label-hint">(MM/YY)</span></label>
+              <input id="cardExpiry" name="cardExpiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" required>
+              <p class="field-error" id="cardExpiry-error" aria-live="polite"></p>
+            </div>
+            <div class="form-field">
+              <label for="cardCvc">Security code</label>
+              <input id="cardCvc" name="cardCvc" inputmode="numeric" autocomplete="cc-csc" required>
+              <p class="field-error" id="cardCvc-error" aria-live="polite"></p>
+            </div>
+            <div class="form-field">
+              <label for="postalCode">Postal code</label>
+              <input id="postalCode" name="postalCode" autocomplete="postal-code" required>
+              <p class="field-error" id="postalCode-error" aria-live="polite"></p>
+            </div>
+          </div>
+          <p class="form-error" role="alert" hidden></p>
+          <button type="submit" class="btn btn-primary" id="submitBtn"></button>
+        </form>
+      </div>
+      <aside class="order-summary" aria-labelledby="summary-title">
+        <h2 id="summary-title">Order summary</h2>
+      </aside>
     </section>
   </main>
 </body>

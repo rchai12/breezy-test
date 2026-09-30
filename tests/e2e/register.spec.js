@@ -24,7 +24,9 @@ async function fillAccount(page, overrides = {}) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.clock.install();
+  const frozen = new Date('2026-09-30T12:00:00');
+  await page.clock.install({ time: frozen });
+  await page.clock.pauseAt(frozen);
   await page.addInitScript(() => {
     const marker = 'breezy.db.cleared';
     if (sessionStorage.getItem(marker)) return;
@@ -49,9 +51,12 @@ test('shows a no-trial price without a free period', async ({ page }) => {
 
 test('waits a second before showing a name error', async ({ page }) => {
   await openRegister(page);
-  await page.locator('#firstName').pressSequentially('R2');
+  await page.locator('#firstName').evaluate(el => {
+    el.value = 'R2';
+    el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText' }));
+  });
   await page.clock.runFor(999);
-  await expect(page.locator('#firstName-error')).toBeEmpty();
+  expect(await page.locator('#firstName-error').textContent()).toBe('');
   await page.clock.runFor(1);
   await expect(page.locator('#firstName-error')).toHaveText('Use letters only. Spaces, hyphens, apostrophes and periods are fine.');
   await expect(page.locator('#firstName')).toHaveAttribute('aria-invalid', 'true');

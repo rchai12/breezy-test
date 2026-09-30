@@ -116,6 +116,33 @@ test('first and last name stack at 360px and sit side by side at 768px', async (
   expect(row[0].right).toBeLessThanOrEqual(row[1].left + 1);
 });
 
+for (const width of [360, 768, 1280]) {
+  test(`payment form does not scroll horizontally at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await seedFlow(page, { planId: 'power', account: SAMPLE.account });
+    await page.goto(fileUrl('signup/payment.html'));
+    await expect(page.locator('.payment-form')).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
+
+test('order summary sits beside the form at 1280px and above it at 360px', async ({ page }) => {
+  await seedFlow(page, { planId: 'power', account: SAMPLE.account });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto(fileUrl('signup/payment.html'));
+  const wide = await page.locator('.payment-main, .order-summary').evaluateAll(els => {
+    return els.map(el => el.getBoundingClientRect());
+  });
+  expect(wide[1].left).toBeGreaterThan(wide[0].right - 1);
+
+  await page.setViewportSize({ width: 360, height: 800 });
+  const narrow = await page.locator('.payment-main, .order-summary').evaluateAll(els => {
+    return els.map(el => el.getBoundingClientRect());
+  });
+  expect(narrow[1].bottom).toBeLessThanOrEqual(narrow[0].top + 1);
+});
+
 test('plans page keeps the cards in one row at 1280px', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(fileUrl('signup/plans.html', '?plan=power'));

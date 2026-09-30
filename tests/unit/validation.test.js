@@ -6,7 +6,7 @@ const GOOD_NAMES = ['Zoë', "O'Brien", 'O’Brien', 'Jean-Luc', 'St. John', 'Jos
 const BAD_NAMES = ['R2D2', '123', '-Bob', "'Ann", 'Ada!', '', '   '];
 
 function loadValidation() {
-  return loadScripts(['validation']).Breezy.validation;
+  return loadScripts(['card-format', 'validation']).Breezy.validation;
 }
 
 describe('names', () => {
@@ -123,3 +123,84 @@ describe('account', () => {
     assert.deepEqual(Object.keys(plain(invalid.errors)).sort(), ['email', 'firstName', 'passwordConfirm']);
   });
 });
+
+const NOW = new Date(2026, 8, 30);
+
+describe('card expiry', () => {
+  it('accepts the current month and the next twenty years', () => {
+    const validation = loadValidation();
+    const current = validation.cardExpiry('0926', NOW);
+    assert.equal(current.error, null);
+    assert.equal(current.value.month, 9);
+    assert.equal(current.value.year, 2026);
+    assert.equal(validation.cardExpiry('0826', NOW).error, 'This card has expired.');
+    assert.equal(validation.cardExpiry('1326', NOW).error, 'Enter a month from 01 to 12.');
+    assert.equal(validation.cardExpiry('1246', NOW).error, null);
+    assert.equal(validation.cardExpiry('0147', NOW).error, 'Check the expiry year.');
+    assert.equal(validation.cardExpiry('12', NOW).error, 'Use the format MM/YY.');
+    assert.equal(validation.cardExpiry('', NOW).error, 'Enter the expiry date.');
+  });
+});
+
+describe('card number, security code, and name', () => {
+  it('checks brand, length, and the Luhn test in that order', () => {
+    const validation = loadValidation();
+    assert.equal(validation.cardNumber('').error, 'Enter your card number.');
+    assert.equal(validation.cardNumber('1234567890123456').error, 'We accept Visa, Mastercard, American Express and Discover.');
+    assert.equal(validation.cardNumber('424242424242424').error, 'Enter the full 16-digit card number.');
+    assert.equal(validation.cardNumber('37828224631000').error, 'Enter the full 15-digit card number.');
+    assert.equal(validation.cardNumber('4242424242424241').error, "Check your card number. It doesn't look right.");
+    const valid = validation.cardNumber('4242424242424242');
+    assert.equal(valid.error, null);
+    assert.equal(valid.value.brand, 'visa');
+  });
+
+  it('uses four digits for American Express and three for other brands', () => {
+    const validation = loadValidation();
+    assert.equal(validation.cardCvc('123', 'visa').error, null);
+    assert.equal(validation.cardCvc('123', 'amex').error, 'Enter the 4-digit security code on the front of your card.');
+    assert.equal(validation.cardCvc('1234', 'amex').error, null);
+  });
+
+  it('asks for a full card name made of letters', () => {
+    const validation = loadValidation();
+    assert.equal(validation.cardName('A').error, 'Enter the full name on your card.');
+    assert.equal(validation.cardName('Ada Breath').error, null);
+    assert.equal(validation.cardName('R2D2').error, 'Use letters only. Spaces, hyphens, apostrophes and periods are fine.');
+  });
+});
+
+describe('postal code and payment', () => {
+  it('accepts postal codes of three to ten characters', () => {
+    const validation = loadValidation();
+    assert.equal(validation.postalCode('10001').error, null);
+    assert.equal(validation.postalCode('SW1A 1AA').error, null);
+    const canada = validation.postalCode('k1a-0b1');
+    assert.equal(canada.error, null);
+    assert.equal(canada.value, 'K1A-0B1');
+    assert.equal(validation.postalCode('12').error, 'Use 3\u201310 letters, numbers, spaces or hyphens.');
+    assert.ok(validation.postalCode('1234567890A').error);
+    assert.ok(validation.postalCode('@@@').error);
+  });
+
+  it('returns every valid field and only the security-code error for a short Amex code', () => {
+    const validation = loadValidation();
+    const valid = validation.payment({
+      cardName: 'Ada Breath',
+      cardNumber: '4242424242424242',
+      cardExpiry: '1228',
+      cardCvc: '123',
+      postalCode: '10001',
+    }, NOW);
+    assert.deepEqual(plain(valid.errors), {});
+    const amex = validation.payment({
+      cardName: 'Ada Breath',
+      cardNumber: '378282246310005',
+      cardExpiry: '1228',
+      cardCvc: '123',
+      postalCode: '10001',
+    }, NOW);
+    assert.deepEqual(Object.keys(plain(amex.errors)), ['cardCvc']);
+  });
+});
+

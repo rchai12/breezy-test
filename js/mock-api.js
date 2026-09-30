@@ -166,24 +166,161 @@
     };
   }
 
+  const TEST_CARDS = Object.freeze({
+    visa: '4242424242424242',
+    amex: '378282246310005',
+    declined: '4000000000000002',
+  });
+
   /**
-   * Phase 4. Simulates a payment provider turning a card into a token.
-   * @param {{number: string, expMonth: number, expYear: number, cvc: string, name: string, postalCode: string}} card
+   * Turns a card into a token. The full number and security code are not stored.
+   * @param {{ cardName: string, cardNumber: string, cardExpiry: string, cardCvc: string, postalCode: string }} input
    * @returns {Promise<object>} data: { token, brand, last4, expMonth, expYear }
    */
-  async function tokenizeCard(card) {
+  async function tokenizeCard(input) {
     await delay();
-    return notImplemented('tokenizeCard');
+    const checked = Breezy.validation.payment(input);
+    if (Object.keys(checked.errors).length) {
+      return {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Please fix the highlighted fields.',
+          fields: checked.errors,
+        },
+      };
+    }
+
+    const digits = checked.values.cardNumber.digits;
+    if (!Object.values(TEST_CARDS).includes(digits)) {
+      return {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Please fix the highlighted fields.',
+          fields: { cardNumber: 'This demo only accepts test cards. Try 4242 4242 4242 4242.' },
+        },
+      };
+    }
+
+    if (digits === TEST_CARDS.declined) {
+      return {
+        ok: false,
+        error: {
+          code: 'CARD_DECLINED',
+          message: 'Your card was declined.',
+          fields: { cardNumber: 'Your card was declined. Try a different card.' },
+        },
+      };
+    }
+
+    const token = `tok_${toHex(crypto.getRandomValues(new Uint8Array(8)))}`;
+    const method = {
+      token,
+      brand: checked.values.cardNumber.brand,
+      last4: digits.slice(-4),
+      expMonth: checked.values.cardExpiry.month,
+      expYear: checked.values.cardExpiry.year,
+      used: false,
+      createdAt: new Date().toISOString(),
+    };
+    const db = loadDb();
+    db.paymentMethods.push(method);
+    saveDb(db);
+    return {
+      ok: true,
+      data: {
+        token: method.token,
+        brand: method.brand,
+        last4: method.last4,
+        expMonth: method.expMonth,
+        expYear: method.expYear,
+      },
+    };
   }
 
   /**
-   * Phase 4.
-   * @param {{accountId: string, planId: string, paymentToken: string}} input
+   * @param {{ accountId: string, planId: string, paymentToken: string }} input
    * @returns {Promise<object>} data: { subscriptionId, planId, status, startedAt, firstChargeAt, amountCents, card: { brand, last4 } }
    */
   async function createSubscription(input) {
     await delay();
-    return notImplemented('createSubscription');
+    const db = loadDb();
+    const account = db.accounts.find(item => item.accountId === input.accountId);
+    if (!account) {
+      return {
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: "We couldn't find your account. Please start over.",
+          fields: {},
+        },
+      };
+    }
+
+    const plan = Breezy.plans.get(input.planId);
+    if (!plan || !plan.selfServe) {
+      return {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: "That plan can't be purchased online.",
+          fields: {},
+        },
+      };
+    }
+
+    const method = db.paymentMethods.find(item => item.token === input.paymentToken);
+    if (!method || method.used) {
+      const message = "This payment method can't be used. Please re-enter your card.";
+      return {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message,
+          fields: { cardNumber: message },
+        },
+      };
+    }
+
+    const already = db.subscriptions.some(item => item.accountId === input.accountId);
+    if (already) {
+      return {
+        ok: false,
+        error: {
+          code: 'ALREADY_SUBSCRIBED',
+          message: 'This account already has a subscription.',
+          fields: {},
+        },
+      };
+    }
+
+    const now = new Date();
+    method.used = true;
+    const subscription = {
+      subscriptionId: `sub_${toHex(crypto.getRandomValues(new Uint8Array(6)))}`,
+      accountId: input.accountId,
+      planId: plan.id,
+      status: plan.trialDays > 0 ? 'trialing' : 'active',
+      startedAt: now.toISOString(),
+      firstChargeAt: Breezy.billing.firstChargeDate(plan, now).toISOString(),
+      amountCents: plan.priceCents,
+      card: { brand: method.brand, last4: method.last4 },
+    };
+    db.subscriptions.push(subscription);
+    saveDb(db);
+    return {
+      ok: true,
+      data: {
+        subscriptionId: subscription.subscriptionId,
+        planId: subscription.planId,
+        status: subscription.status,
+        startedAt: subscription.startedAt,
+        firstChargeAt: subscription.firstChargeAt,
+        amountCents: subscription.amountCents,
+        card: subscription.card,
+      },
+    };
   }
 
   // Clears breezy.db. For manual testing only.
@@ -203,7 +340,9 @@
       CARD_DECLINED: 'CARD_DECLINED',
       NOT_FOUND: 'NOT_FOUND',
       NOT_IMPLEMENTED: 'NOT_IMPLEMENTED',
+      ALREADY_SUBSCRIBED: 'ALREADY_SUBSCRIBED',
     }),
+    TEST_CARDS,
     createAccount,
     tokenizeCard,
     createSubscription,

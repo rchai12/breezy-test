@@ -26,3 +26,5 @@ Realized it is best to include testing, to ensure reliability of existing featur
 
 Had to think about the comparison table to be honest. I wanted to keep it simple, but the recommendations was that certain layouts would fit better for phone layouts. Phones are often the one of the most used devices for web browsing nowadays, so it is best to develop with that audience in mind. Need to be tested though to ensure presentation is good.
 
+Some bugs noted so far:
+In mobile screen mode for the comparison page, the radio button for the subscription selector, covers the whole plan card. In the same comparison page on mobile screen mode, the confirmation card is cut off by the feature list.
