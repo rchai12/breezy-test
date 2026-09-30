@@ -106,7 +106,9 @@
     const hasSubscription = state.subscription != null;
     let redirect = null;
 
-    if (step === 'register' && !hasPlan) {
+    if ((step === 'register' || step === 'payment') && hasSubscription) {
+      redirect = 'plans.html';
+    } else if (step === 'register' && !hasPlan) {
       redirect = 'plans.html';
     } else if (step === 'payment') {
       if (!hasPlan) redirect = 'plans.html';

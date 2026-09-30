@@ -16,7 +16,13 @@ Upon physical inspection, the faq section seems to be fixed properly. Opening qu
 
 Proposed Feature - Signing Up:
 
-I wanted to simulate the sign up process. This meant, ensuring routing for areas from the homepage for purchasing the subscription, navigated to the sign up areas. This means creating a page that lists the pros and cons of the different tiers (that are available online), as well as the form area where a user has to create an account, along with their payment details.
+I wanted to simulate the sign up process. This meant, ensuring routing for areas from the homepage for purchasing the subscription, navigated to the sign up areas. This means creating a page that lists comparisons of the different tiers (that are available online), as well as the form area where a user has to create an account, along with their payment details.
 
 Considered using the existing plan comparision area on the homepage, and only having that route to signup/payment. But I thought a customer might appreciate a more isolated experience, that focused on plan comparison only.
+
+Realized if i am going to add more pages and functionality, I should also modularize the homepage.
+
+Realized it is best to include testing, to ensure reliability of existing features, while also ensuring future features do not break anything.
+
+Had to think about the comparison table to be honest. I wanted to keep it simple, but the recommendations was that certain layouts would fit better for phone layouts. Phones are often the one of the most used devices for web browsing nowadays, so it is best to develop with that audience in mind. Need to be tested though to ensure presentation is good.
 

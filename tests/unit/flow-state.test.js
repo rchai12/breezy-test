@@ -76,6 +76,21 @@ describe('guard', () => {
     assert.equal(Breezy.flow.guard('confirmation'), true);
   });
 
+  it('sends a subscribed user back to plans from register and payment', () => {
+    const { Breezy, replaced } = loadFlow();
+    Breezy.flow.update({
+      planId: 'power',
+      account: { accountId: 'acc_test', name: 'Ada Breath', email: 'ada@example.com' },
+      subscription: { subscriptionId: 'sub_test', planId: 'power', status: 'trialing' },
+    });
+    assert.equal(Breezy.flow.guard('register'), false);
+    assert.equal(Breezy.flow.guard('payment'), false);
+    assert.deepEqual(replaced, ['plans.html', 'plans.html']);
+    assert.equal(Breezy.flow.guard('plans'), true);
+    assert.equal(Breezy.flow.guard('confirmation'), true);
+    assert.deepEqual(replaced, ['plans.html', 'plans.html']);
+  });
+
   it('sends enterprise back to plans because it is not self-serve', () => {
     const { Breezy, replaced } = loadFlow();
     Breezy.flow.update({ planId: 'enterprise' });

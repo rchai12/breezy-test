@@ -25,7 +25,12 @@
       trialDays: 0,
       selfServe: true,
       popular: false,
-      bestFor: 'People who breathe recreationally',
+      highlights: Object.freeze([
+        'Up to 23,000 breaths/day',
+        'Standard atmospheric blend',
+        'Email support (we may reply)',
+        '1 nostril optimization',
+      ]),
       contactMessage: null,
     }),
     freezePlan({
@@ -37,7 +42,13 @@
       trialDays: 7,
       selfServe: true,
       popular: true,
-      bestFor: 'Committed, full-time breathers',
+      highlights: Object.freeze([
+        'Unlimited breaths',
+        '3 premium altitude blends',
+        'Priority support (we will reply)',
+        'Dual-nostril optimization',
+        'Monthly Air Report™',
+      ]),
       contactMessage: null,
     }),
     freezePlan({
@@ -49,7 +60,13 @@
       trialDays: 0,
       selfServe: false,
       popular: false,
-      bestFor: 'Open-plan offices with shared lungs',
+      highlights: Object.freeze([
+        'Everything in Power Inhaler',
+        'Dedicated Air Account Manager',
+        'Custom scent profiles',
+        'SSO (Single Sniff-On)',
+        'SLA: 99.9% oxygen uptime',
+      ]),
       contactMessage: '📞 Our Air Sales team will reach out within 1 business breath.',
     }),
   ]);
@@ -63,7 +80,7 @@
     freezeRow({
       id: 'blends',
       label: 'Atmospheric blends',
-      values: { casual: 'Standard', power: '3 premium altitude', enterprise: 'Premium + custom scents' },
+      values: { casual: 'Standard', power: '3 premium altitude', enterprise: '3 premium + custom scent profiles' },
     }),
     freezeRow({
       id: 'nostrils',
@@ -76,7 +93,7 @@
       values: {
         casual: 'Email (we may reply)',
         power: 'Priority (we will reply)',
-        enterprise: 'Dedicated manager',
+        enterprise: 'Dedicated Air Account Manager',
       },
     }),
     freezeRow({
@@ -138,7 +155,43 @@
     return errors;
   }
 
-  Breezy.plans = { list, comparison, get, formatPrice, _findDataErrors: findDataErrors };
+  /**
+   * @param {{ selfServe: boolean, trialDays: number }} plan
+   * @returns {string}
+   */
+  function ctaLabel(plan) {
+    if (!plan.selfServe) return 'Contact Sales';
+    if (plan.trialDays > 0) return 'Start Free Trial';
+    return 'Get Started';
+  }
+
+  /**
+   * Price and trial rows built from the plan list, followed by the comparison rows.
+   * @returns {Array<object>}
+   */
+  function tableRows() {
+    const priceValues = {};
+    const trialValues = {};
+    list.forEach(plan => {
+      priceValues[plan.id] = `${formatPrice(plan.priceCents)}/mo`;
+      trialValues[plan.id] = plan.trialDays > 0 ? `${plan.trialDays} days` : false;
+    });
+    return Object.freeze([
+      freezeRow({ id: 'price', label: 'Price', values: priceValues }),
+      freezeRow({ id: 'trial', label: 'Free trial', values: trialValues }),
+      ...comparison,
+    ]);
+  }
+
+  Breezy.plans = {
+    list,
+    comparison,
+    get,
+    formatPrice,
+    ctaLabel,
+    tableRows,
+    _findDataErrors: findDataErrors,
+  };
 
   findDataErrors(comparison).forEach(msg => console.error(msg));
 })();

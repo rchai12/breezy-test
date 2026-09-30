@@ -187,46 +187,8 @@
     <div class="section-label">Pricing</div>
     <div class="section-title">Choose your atmosphere</div>
     <p class="section-sub" style="margin:0 auto;">All plans include unlimited access to Earth&#8217;s atmosphere (terms apply).</p>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <h3>Casual Breather</h3>
-        <p class="desc">For the air-curious</p>
-        <div class="price"><sup>$</sup>9<sub>/mo</sub></div>
-        <ul>
-          <li>Up to 23,000 breaths/day</li>
-          <li>Standard atmospheric blend</li>
-          <li>Email support (we may reply)</li>
-          <li>1 nostril optimization</li>
-        </ul>
-        <a class="btn btn-secondary" href="signup/plans.html?plan=casual">Get Started</a>
-      </div>
-      <div class="price-card popular">
-        <div class="popular-tag">Most Popular</div>
-        <h3>Power Inhaler</h3>
-        <p class="desc">For serious oxygen enthusiasts</p>
-        <div class="price"><sup>$</sup>29<sub>/mo</sub></div>
-        <ul>
-          <li>Unlimited breaths</li>
-          <li>3 premium altitude blends</li>
-          <li>Priority support (we will reply)</li>
-          <li>Dual-nostril optimization</li>
-          <li>Monthly Air Report™</li>
-        </ul>
-        <a class="btn btn-primary" href="signup/plans.html?plan=power">Start Free Trial</a>
-      </div>
-      <div class="price-card">
-        <h3>Enterprise Lung</h3>
-        <p class="desc">For teams that breathe together</p>
-        <div class="price"><sup>$</sup>99<sub>/mo</sub></div>
-        <ul>
-          <li>Everything in Power Inhaler</li>
-          <li>Dedicated Air Account Manager</li>
-          <li>Custom scent profiles</li>
-          <li>SSO (Single Sniff-On)</li>
-          <li>SLA: 99.9% oxygen uptime</li>
-        </ul>
-        <button class="btn btn-secondary" onclick="showToast('📞 Our Air Sales team will reach out within 1 business breath.')">Contact Sales</button>
-      </div>
+    <div class="pricing-grid" id="pricingGrid">
+      <noscript><p>Plans and prices need JavaScript. Call 1-888-AIR-GOOD and we'll breathe you through it.</p></noscript>
     </div>
   </div>
 </section>
@@ -368,6 +330,8 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<script src="js/plans-data.js"></script>
+<script src="js/home-pricing.js"></script>
 <script src="js/home.js"></script>
 
 </body>

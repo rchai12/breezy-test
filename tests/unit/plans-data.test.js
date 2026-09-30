@@ -26,6 +26,31 @@ describe('plan list', () => {
     assert.equal(Breezy.plans.get(undefined), null);
   });
 
+  it('drops bestFor and keeps frozen highlight lists', () => {
+    const { Breezy } = loadPlans();
+    const powerHighlights = [
+      'Unlimited breaths',
+      '3 premium altitude blends',
+      'Priority support (we will reply)',
+      'Dual-nostril optimization',
+      'Monthly Air Report™',
+    ];
+    Breezy.plans.list.forEach(plan => {
+      assert.equal('bestFor' in plan, false);
+      assert.equal(Object.isFrozen(plan.highlights), true);
+      assert.ok(plan.highlights.length > 0);
+      plan.highlights.forEach(item => assert.equal(typeof item, 'string'));
+    });
+    assert.deepEqual(plain(Breezy.plans.get('power').highlights), powerHighlights);
+  });
+
+  it('labels each plan from its trial and self-serve flags', () => {
+    const { Breezy } = loadPlans();
+    assert.equal(Breezy.plans.ctaLabel(Breezy.plans.get('casual')), 'Get Started');
+    assert.equal(Breezy.plans.ctaLabel(Breezy.plans.get('power')), 'Start Free Trial');
+    assert.equal(Breezy.plans.ctaLabel(Breezy.plans.get('enterprise')), 'Contact Sales');
+  });
+
   it('formats whole dollars without cents and keeps cents otherwise', () => {
     const { Breezy } = loadPlans();
     assert.equal(Breezy.plans.formatPrice(900), '$9');
@@ -42,6 +67,29 @@ describe('comparison data', () => {
       plain(Breezy.plans.comparison.map(row => row.id)),
       ['breaths', 'blends', 'nostrils', 'support', 'airReport', 'sso', 'sla']
     );
+  });
+
+  it('uses the full enterprise phrases for blends and support', () => {
+    const { Breezy } = loadPlans();
+    const blends = Breezy.plans.comparison.find(row => row.id === 'blends');
+    const support = Breezy.plans.comparison.find(row => row.id === 'support');
+    assert.equal(blends.values.enterprise, '3 premium + custom scent profiles');
+    assert.equal(support.values.enterprise, 'Dedicated Air Account Manager');
+  });
+
+  it('builds price and trial rows in front of the comparison', () => {
+    const { Breezy } = loadPlans();
+    const rows = Breezy.plans.tableRows();
+    assert.equal(rows.length, 9);
+    assert.equal(rows[0].id, 'price');
+    assert.deepEqual(plain(rows[0].values), { casual: '$9/mo', power: '$29/mo', enterprise: '$99/mo' });
+    assert.equal(rows[1].id, 'trial');
+    assert.deepEqual(plain(rows[1].values), { casual: false, power: '7 days', enterprise: false });
+    rows.slice(2).forEach((row, index) => {
+      assert.equal(row, Breezy.plans.comparison[index]);
+    });
+    assert.deepEqual(plain(Breezy.plans._findDataErrors(rows)), []);
+    assert.equal(Object.isFrozen(rows), true);
   });
 
   it('reports no errors for the real comparison table', () => {

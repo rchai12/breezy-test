@@ -8,10 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/tokens.css">
 <link rel="stylesheet" href="../css/signup.css">
-<script defer src="../js/plans-data.js"></script>
-<script defer src="../js/flow-state.js"></script>
-<script defer src="../js/mock-api.js"></script>
-<script defer src="../js/pages/plans.js"></script>
 </head>
 <body>
   <header class="signup-header">
@@ -22,15 +18,34 @@
       <li aria-current="step">Plan</li><li>Account</li><li>Payment</li><li>Done</li>
     </ol>
   </nav>
-  <main class="signup-main">
+  <main class="signup-main signup-main--wide">
     <div class="storage-warning" role="status" hidden>
       Your browser is blocking storage for local files, so progress won't carry between pages.
       See the README for how to run the site with a local server.
     </div>
     <section class="signup-card" aria-labelledby="step-title">
       <h1 id="step-title">Choose your plan</h1>
-      <p>Plan comparison coming in Phase 2.</p>
+      <p class="step-intro">Pick a plan, then compare what's included below.</p>
+      <div class="subscribed-notice" role="status" hidden></div>
+      <fieldset class="plan-picker">
+        <legend class="visually-hidden">Choose a plan</legend>
+      </fieldset>
+      <h2 class="compare-title">Compare plans</h2>
+      <div class="compare-scroll" role="region" aria-label="Plan comparison" tabindex="0">
+      </div>
+      <p class="swipe-hint" aria-hidden="true">Swipe to compare →</p>
+      <div class="plan-summary">
+        <p class="plan-summary-text" aria-live="polite">Select a plan to continue.</p>
+        <button type="button" class="btn btn-primary" id="continueBtn" disabled>Continue</button>
+      </div>
     </section>
   </main>
+  <script src="../js/plans-data.js"></script>
+  <script src="../js/billing.js"></script>
+  <script src="../js/flow-state.js"></script>
+  <script src="../js/mock-api.js"></script>
+  <script src="../js/components/plan-picker.js"></script>
+  <script src="../js/components/compare-table.js"></script>
+  <script src="../js/pages/plans.js"></script>
 </body>
 </html>

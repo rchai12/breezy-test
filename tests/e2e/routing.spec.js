@@ -36,17 +36,6 @@ test('Book Air in the mobile menu opens the plans page', async ({ page }) => {
   await expect(page).toHaveURL(/signup\/plans\.html$/);
 });
 
-test('shows the preselected plan name only for a self-serve plan', async ({ page }) => {
-  await page.goto(fileUrl('signup/plans.html', '?plan=power'));
-  await expect(page.getByText('Preselected: Power Inhaler')).toBeVisible();
-
-  await page.goto(fileUrl('signup/plans.html', '?plan=enterprise'));
-  await expect(page.getByText('Preselected')).toHaveCount(0);
-
-  await page.goto(fileUrl('signup/plans.html'));
-  await expect(page.getByText('Preselected')).toHaveCount(0);
-});
-
 // Bug: the onclick attribute ends at the \" quote, so the handler is invalid JavaScript.
 test.fixme('Watch the Story shows its toast and stays on the homepage', async ({ page }) => {
   await page.goto(fileUrl('breezy-intern-test.html'));
