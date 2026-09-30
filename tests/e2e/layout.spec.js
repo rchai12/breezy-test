@@ -143,6 +143,72 @@ test('order summary sits beside the form at 1280px and above it at 360px', async
   expect(narrow[1].bottom).toBeLessThanOrEqual(narrow[0].top + 1);
 });
 
+for (const size of [
+  { width: 390, height: 844 },
+  { width: 360, height: 800 },
+]) {
+  test(`the selected plan dot stays inside its circle at ${size.width}px`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto(fileUrl('signup/plans.html', '?plan=power'));
+    const selected = page.locator('.plan-card.is-selected');
+    const measured = await selected.evaluate(card => {
+      const radio = card.querySelector('.plan-card-radio');
+      const name = card.querySelector('.plan-card-name');
+      const radioBox = radio.getBoundingClientRect();
+      const nameBox = name.getBoundingClientRect();
+      const dot = getComputedStyle(radio, '::after');
+      const hit = document.elementFromPoint(
+        nameBox.left + nameBox.width / 2,
+        nameBox.top + nameBox.height / 2
+      );
+      return {
+        width: radioBox.width,
+        height: radioBox.height,
+        centerGap: Math.abs((radioBox.top + radioBox.height / 2) - (nameBox.top + nameBox.height / 2)),
+        dotWidth: Number.parseFloat(dot.width),
+        dotHeight: Number.parseFloat(dot.height),
+        position: getComputedStyle(radio).position,
+        nameIsOnTop: hit === name || name.contains(hit),
+      };
+    });
+    expect(measured.width).toBeCloseTo(18, 0);
+    expect(measured.height).toBeCloseTo(18, 0);
+    expect(measured.centerGap).toBeLessThanOrEqual(4);
+    expect(measured.dotWidth).toBeLessThanOrEqual(18);
+    expect(measured.dotHeight).toBeLessThanOrEqual(18);
+    expect(measured.position).not.toBe('static');
+    expect(measured.nameIsOnTop).toBe(true);
+  });
+
+  test(`the pinned summary stays above the comparison table at ${size.width}px`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto(fileUrl('signup/plans.html', '?plan=power'));
+    await page.locator('.compare-title').evaluate(el => el.scrollIntoView());
+    const covered = await page.evaluate(() => {
+      const summary = document.querySelector('.plan-summary');
+      const text = summary.querySelector('.plan-summary-text').getBoundingClientRect();
+      const button = document.getElementById('continueBtn').getBoundingClientRect();
+      const bar = summary.getBoundingClientRect();
+      const points = [
+        [text.left + text.width / 2, text.top + text.height / 2],
+        [button.left + button.width / 2, button.top + button.height / 2],
+        [bar.left + 10, bar.top + bar.height / 2],
+      ];
+      return points.map(([x, y]) => summary.contains(document.elementFromPoint(x, y)));
+    });
+    expect(covered).toEqual([true, true, true]);
+  });
+
+  test(`continue still opens register when the summary covers the table at ${size.width}px`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto(fileUrl('signup/plans.html', '?plan=power'));
+    await page.locator('.compare-title').evaluate(el => el.scrollIntoView());
+    const box = await page.locator('#continueBtn').boundingBox();
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page).toHaveURL(/register\.html$/);
+  });
+}
+
 test('plans page keeps the cards in one row at 1280px', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(fileUrl('signup/plans.html', '?plan=power'));

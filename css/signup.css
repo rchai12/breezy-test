@@ -513,7 +513,9 @@ h1, h2, h3, h4 {
   }
 
   .plan-card-radio {
-    position: static;
+    position: relative;
+    top: auto;
+    left: auto;
     grid-column: 1;
     grid-row: 1;
   }
@@ -562,6 +564,7 @@ h1, h2, h3, h4 {
     align-items: stretch;
     position: sticky;
     bottom: 0;
+    z-index: 2;
     background: #fff;
     padding: 16px;
     margin-top: 16px;
