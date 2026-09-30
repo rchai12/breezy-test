@@ -36,8 +36,7 @@ test('Book Air in the mobile menu opens the plans page', async ({ page }) => {
   await expect(page).toHaveURL(/signup\/plans\.html$/);
 });
 
-// Bug: the onclick attribute ends at the \" quote, so the handler is invalid JavaScript.
-test.fixme('Watch the Story shows its toast and stays on the homepage', async ({ page }) => {
+test('Watch the Story shows its toast and stays on the homepage', async ({ page }) => {
   await page.goto(fileUrl('breezy-intern-test.html'));
   const url = page.url();
   await page.getByRole('button', { name: 'Watch the Story' }).click();
@@ -45,6 +44,17 @@ test.fixme('Watch the Story shows its toast and stays on the homepage', async ({
   await expect(toast).toHaveClass(/show/);
   await expect(toast).toHaveText('📺 Playing: "The Art of Nothing" (3 min)');
   await expect(page).toHaveURL(url);
+});
+
+test('Watch the Story does not open another page', async ({ page }) => {
+  await page.goto(fileUrl('breezy-intern-test.html'));
+  let opened = false;
+  page.context().on('page', () => {
+    opened = true;
+  });
+  await page.getByRole('button', { name: 'Watch the Story' }).click();
+  await expect(page.locator('#toast')).toHaveClass(/show/);
+  expect(opened).toBe(false);
 });
 
 test('Contact Sales shows its toast and stays on the homepage', async ({ page }) => {

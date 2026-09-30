@@ -5,6 +5,17 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3200);
 }
 
+// Set to a video URL once the story video exists; until then the button only shows a toast.
+const STORY_VIDEO_URL = null;
+
+function playStory() {
+  if (STORY_VIDEO_URL) {
+    window.open(STORY_VIDEO_URL, '_blank', 'noopener');
+    return;
+  }
+  showToast('📺 Playing: "The Art of Nothing" (3 min)');
+}
+
 function handleSignup() {
   const email = document.getElementById('emailInput').value;
   if (email && email.includes('@')) {
