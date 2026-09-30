@@ -9,8 +9,11 @@
 <link rel="stylesheet" href="../css/tokens.css">
 <link rel="stylesheet" href="../css/signup.css">
 <script defer src="../js/plans-data.js"></script>
+<script defer src="../js/billing.js"></script>
+<script defer src="../js/validation.js"></script>
 <script defer src="../js/flow-state.js"></script>
 <script defer src="../js/mock-api.js"></script>
+<script defer src="../js/components/form-field.js"></script>
 <script defer src="../js/pages/register.js"></script>
 </head>
 <body>
@@ -29,7 +32,70 @@
     </div>
     <section class="signup-card" aria-labelledby="step-title">
       <h1 id="step-title">Create your account</h1>
-      <p>Account form coming in Phase 3.</p>
+      <p class="plan-reminder"></p>
+
+      <div class="signed-in-panel" hidden>
+        <p>Signed in as <strong class="signed-in-name"></strong> (<span class="signed-in-email"></span>).</p>
+        <a class="btn btn-primary" href="payment.html">Continue to payment →</a>
+        <p class="start-over">Not you? <button type="button" class="link-button" id="startOverBtn">Start over</button></p>
+      </div>
+
+      <form class="register-form" novalidate>
+        <p class="step-intro">It takes 30 seconds, or about 6 breaths.</p>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="firstName">First name</label>
+            <input id="firstName" name="firstName" autocomplete="given-name" required>
+            <p class="field-error" id="firstName-error" aria-live="polite"></p>
+          </div>
+          <div class="form-field">
+            <label for="lastName">Last name</label>
+            <input id="lastName" name="lastName" autocomplete="family-name" required>
+            <p class="field-error" id="lastName-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" required>
+          <p class="field-error" id="email-error" aria-live="polite"></p>
+        </div>
+        <div class="form-field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" autocomplete="new-password" required aria-describedby="password-checks">
+            <button type="button" class="toggle-password" aria-controls="password" aria-pressed="false">Show</button>
+          </div>
+          <ul class="password-checks" id="password-checks">
+            <li data-check="length">At least 8 characters</li>
+            <li data-check="letter">A letter</li>
+            <li data-check="number">A number</li>
+          </ul>
+          <p class="field-error" id="password-error" aria-live="polite"></p>
+        </div>
+        <div class="form-field">
+          <label for="passwordConfirm">Confirm password</label>
+          <div class="password-wrap">
+            <input id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" required>
+            <button type="button" class="toggle-password" aria-controls="passwordConfirm" aria-pressed="false">Show</button>
+          </div>
+          <p class="field-error" id="passwordConfirm-error" aria-live="polite"></p>
+        </div>
+        <div class="form-field form-field--checkbox">
+          <input id="waiver" name="waiver" type="checkbox" required>
+          <label for="waiver">I've read the <strong>Nostril Waiver</strong> and I get the joke.</label>
+          <details class="waiver-text">
+            <summary>Read the Nostril Waiver</summary>
+            <p><strong>The Nostril Waiver</strong> (v1.0, legally binding in zero jurisdictions)</p>
+            <p>By checking this box, I, the Breather, acknowledge that Breezy sells air, and that I already have air. It is all around me. I am, in fact, using some right now.</p>
+            <p>I understand that any money I pay Breezy buys me nothing I couldn't get by opening a window. It is best described as a donation to a company whose main expenses are glass jars and a lab coat.</p>
+            <p>I agree that Breezy is not responsible for breathing I would have done anyway, sneezes of any size, or the sudden realization that I paid for this.</p>
+            <p><em>No real payment is taken on this site. Your wallet can exhale.</em></p>
+          </details>
+          <p class="field-error" id="waiver-error" aria-live="polite"></p>
+        </div>
+        <p class="form-error" role="alert" hidden></p>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Create account</button>
+      </form>
     </section>
   </main>
 </body>

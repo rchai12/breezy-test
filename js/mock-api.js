@@ -10,10 +10,40 @@
   function emptyDb() {
     return {
       version: 1,
-      accounts: [],
+      accounts: [{
+        accountId: 'acc_demo',
+        firstName: 'Tay',
+        lastName: 'Ken',
+        email: 'taken@breezy.io',
+        passwordHash: null,
+        salt: null,
+        createdAt: '2026-01-01T00:00:00.000Z',
+      }],
       paymentMethods: [],
       subscriptions: [],
     };
+  }
+
+  function toHex(bytes) {
+    return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  // A real system hashes on the server with a slow algorithm (bcrypt, scrypt or Argon2).
+  // PBKDF2 in the browser only shows the principle: store a salted hash, never the password.
+  async function hashPassword(password, saltBytes) {
+    const material = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(password),
+      'PBKDF2',
+      false,
+      ['deriveBits']
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: saltBytes, iterations: 100000, hash: 'SHA-256' },
+      material,
+      256
+    );
+    return toHex(new Uint8Array(bits));
   }
 
   function loadDb() {
@@ -69,13 +99,71 @@
   }
 
   /**
-   * Phase 3.
-   * @param {{name: string, email: string, password: string}} input
-   * @returns {Promise<object>} data: { accountId, name, email, createdAt }
+   * @param {{ firstName: string, lastName: string, email: string, password: string, passwordConfirm: string, waiver: boolean }} input
+   * @returns {Promise<object>} data: { accountId, firstName, lastName, email, createdAt }
    */
   async function createAccount(input) {
     await delay();
-    return notImplemented('createAccount');
+    if (!crypto || !crypto.subtle) {
+      return {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: "This browser can't create accounts securely.",
+          fields: {},
+        },
+      };
+    }
+
+    const checked = Breezy.validation.account(input);
+    if (Object.keys(checked.errors).length) {
+      return {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Please fix the highlighted fields.',
+          fields: checked.errors,
+        },
+      };
+    }
+
+    const db = loadDb();
+    const emailTaken = db.accounts.some(account => account.email === checked.values.email);
+    if (emailTaken) {
+      return {
+        ok: false,
+        error: {
+          code: 'EMAIL_TAKEN',
+          message: 'An account with this email already exists.',
+          fields: { email: 'An account with this email already exists.' },
+        },
+      };
+    }
+
+    const saltBytes = new Uint8Array(16);
+    crypto.getRandomValues(saltBytes);
+    const passwordHash = await hashPassword(checked.values.password, saltBytes);
+    const account = {
+      accountId: `acc_${toHex(crypto.getRandomValues(new Uint8Array(6)))}`,
+      firstName: checked.values.firstName,
+      lastName: checked.values.lastName,
+      email: checked.values.email,
+      passwordHash,
+      salt: toHex(saltBytes),
+      createdAt: new Date().toISOString(),
+    };
+    db.accounts.push(account);
+    saveDb(db);
+    return {
+      ok: true,
+      data: {
+        accountId: account.accountId,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        email: account.email,
+        createdAt: account.createdAt,
+      },
+    };
   }
 
   /**

@@ -81,6 +81,41 @@ test('plans page stacks cards and keeps the feature column fixed at 360px', asyn
   expect(button.y + button.height).toBeLessThanOrEqual(800);
 });
 
+for (const width of [360, 768, 1280]) {
+  test(`register form does not scroll horizontally at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await seedFlow(page, { planId: 'power' });
+    await page.goto(fileUrl('signup/register.html'));
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+
+  test(`signed-in register view does not scroll horizontally at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await seedFlow(page, { planId: 'power', account: SAMPLE.account });
+    await page.goto(fileUrl('signup/register.html'));
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+  });
+}
+
+test('first and last name stack at 360px and sit side by side at 768px', async ({ page }) => {
+  await seedFlow(page, { planId: 'power' });
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.goto(fileUrl('signup/register.html'));
+  const stacked = await page.locator('#firstName, #lastName').evaluateAll(inputs => {
+    return inputs.map(input => input.getBoundingClientRect());
+  });
+  expect(stacked[1].top).toBeGreaterThanOrEqual(stacked[0].bottom - 1);
+
+  await page.setViewportSize({ width: 768, height: 800 });
+  const row = await page.locator('#firstName, #lastName').evaluateAll(inputs => {
+    return inputs.map(input => input.getBoundingClientRect());
+  });
+  expect(Math.abs(row[0].top - row[1].top)).toBeLessThan(2);
+  expect(row[0].right).toBeLessThanOrEqual(row[1].left + 1);
+});
+
 test('plans page keeps the cards in one row at 1280px', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(fileUrl('signup/plans.html', '?plan=power'));

@@ -34,7 +34,7 @@ async function seedFlow(page, state) {
 }
 
 const SAMPLE = {
-  account: { accountId: 'acc_test', name: 'Ada Breath', email: 'ada@example.com' },
+  account: { accountId: 'acc_test', firstName: 'Ada', lastName: 'Breath', email: 'ada@example.com' },
   subscription: {
     subscriptionId: 'sub_test',
     planId: 'power',

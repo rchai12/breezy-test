@@ -108,12 +108,12 @@ describe('flow state', () => {
 
   it('returns a copy from get', () => {
     const { Breezy } = loadFlow();
-    Breezy.flow.update({ account: { accountId: 'acc_test', name: 'Ada', email: 'ada@example.com' } });
+    Breezy.flow.update({ account: { accountId: 'acc_test', firstName: 'Ada', lastName: 'Breath', email: 'ada@example.com' } });
     const copy = Breezy.flow.get();
     copy.planId = 'power';
-    copy.account.name = 'Changed';
+    copy.account.firstName = 'Changed';
     assert.equal(Breezy.flow.get().planId, null);
-    assert.equal(Breezy.flow.get().account.name, 'Ada');
+    assert.equal(Breezy.flow.get().account.firstName, 'Ada');
   });
 
   it('clears back to the empty state', () => {

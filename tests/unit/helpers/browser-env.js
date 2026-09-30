@@ -45,6 +45,9 @@ function loadScripts(names, options = {}) {
     sessionStorage,
     localStorage,
     URLSearchParams,
+    crypto: globalThis.crypto,
+    TextEncoder,
+    Uint8Array,
     setTimeout: (...args) => setTimeout(...args),
     clearTimeout: (...args) => clearTimeout(...args),
   });
