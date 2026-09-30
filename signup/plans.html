@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose your plan · Breezy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/signup.css">
+<script defer src="../js/plans-data.js"></script>
+<script defer src="../js/flow-state.js"></script>
+<script defer src="../js/mock-api.js"></script>
+<script defer src="../js/pages/plans.js"></script>
+</head>
+<body>
+  <header class="signup-header">
+    <a class="nav-brand" href="../breezy-intern-test.html"><em>Breezy</em>&thinsp;™</a>
+  </header>
+  <nav aria-label="Signup progress">
+    <ol class="steps-indicator">
+      <li aria-current="step">Plan</li><li>Account</li><li>Payment</li><li>Done</li>
+    </ol>
+  </nav>
+  <main class="signup-main">
+    <div class="storage-warning" role="status" hidden>
+      Your browser is blocking storage for local files, so progress won't carry between pages.
+      See the README for how to run the site with a local server.
+    </div>
+    <section class="signup-card" aria-labelledby="step-title">
+      <h1 id="step-title">Choose your plan</h1>
+      <p>Plan comparison coming in Phase 2.</p>
+    </section>
+  </main>
+</body>
+</html>

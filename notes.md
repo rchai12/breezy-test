@@ -14,3 +14,9 @@ Faq Fix:
 
 Upon physical inspection, the faq section seems to be fixed properly. Opening questions for answers works, closing answers works, and opening a new question, closes the previous question answer.
 
+Proposed Feature - Signing Up:
+
+I wanted to simulate the sign up process. This meant, ensuring routing for areas from the homepage for purchasing the subscription, navigated to the sign up areas. This means creating a page that lists the pros and cons of the different tiers (that are available online), as well as the form area where a user has to create an account, along with their payment details.
+
+Considered using the existing plan comparision area on the homepage, and only having that route to signup/payment. But I thought a customer might appreciate a more isolated experience, that focused on plan comparison only.
+
