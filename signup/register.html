@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/tokens.css">
 <link rel="stylesheet" href="../css/signup.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <script defer src="../js/plans-data.js"></script>
 <script defer src="../js/billing.js"></script>
 <script defer src="../js/card-format.js"></script>
@@ -27,10 +28,12 @@
     </ol>
   </nav>
   <main class="signup-main">
+    <noscript><p class="storage-warning">This signup needs JavaScript. Please turn it on, or call 1-888-AIR-GOOD.</p></noscript>
     <div class="storage-warning" role="status" hidden>
       Your browser is blocking storage for local files, so progress won't carry between pages.
       See the README for how to run the site with a local server.
     </div>
+    <a class="btn btn-secondary back-to-plans" href="plans.html">← Back to plans</a>
     <section class="signup-card" aria-labelledby="step-title">
       <h1 id="step-title">Create your account</h1>
       <p class="plan-reminder"></p>

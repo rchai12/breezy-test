@@ -210,7 +210,7 @@ test('a returning user can start over', async ({ page }) => {
   await expect(page.locator('.signed-in-panel')).toContainText('Ada Breath');
   await expect(page.locator('.signed-in-panel')).toContainText('ada@example.com');
   await expect(page.locator('.register-form')).toBeHidden();
-  await expect(page.locator('.signed-in-panel a')).toHaveAttribute('href', 'payment.html');
+  await expect(page.locator('.signed-in-panel .btn-primary')).toHaveAttribute('href', 'payment.html');
   await page.locator('#startOverBtn').click();
   await expect(page.locator('.register-form')).toBeVisible();
   await expect(page.locator('#firstName')).toHaveValue('');
@@ -223,4 +223,50 @@ test('still sends an empty or finished signup back to plans', async ({ page }) =
   await expect(page).toHaveURL(/signup\/plans\.html$/);
   await openRegister(page, { planId: 'power', subscription: SAMPLE.subscription });
   await expect(page).toHaveURL(/signup\/plans\.html$/);
+});
+
+test('back to plans keeps the chosen plan', async ({ page }) => {
+  await openRegister(page, { planId: 'power' });
+  const link = page.locator('.signup-main > .back-to-plans');
+  await expect(link).toHaveAttribute('href', /plans\.html\?plan=power$/);
+  const before = await page.evaluate(() => Breezy.flow.get());
+  await link.click();
+  await expect(page).toHaveURL(/signup\/plans\.html\?plan=power$/);
+  await expect(page.locator('input[value="power"]')).toBeChecked();
+  const after = await page.evaluate(() => Breezy.flow.get());
+  expect(after).toEqual(before);
+});
+
+test('the signed-in view also links back to the chosen plan', async ({ page }) => {
+  await openRegister(page, { planId: 'power', account: SAMPLE.account });
+  const link = page.locator('.signup-main > .back-to-plans');
+  await expect(link).toBeVisible();
+  await expect(link).toHaveAttribute('href', /plans\.html\?plan=power$/);
+});
+
+test('back does not leave while the account is being created', async ({ page }) => {
+  await openRegister(page);
+  await fillAccount(page);
+  await page.locator('#submitBtn').click();
+  const link = page.locator('.signup-main > .back-to-plans');
+  await expect(link).toHaveAttribute('aria-disabled', 'true');
+  await expect(link).toHaveClass(/is-disabled/);
+  await link.evaluate(el => el.click());
+  await expect(page).toHaveURL(/signup\/register\.html$/);
+});
+
+test('back sits above the account card and is full width at 360px', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await openRegister(page);
+  const placed = await page.locator('.signup-main').evaluate(main => {
+    const back = main.querySelector('.back-to-plans').getBoundingClientRect();
+    const card = main.querySelector('.signup-card').getBoundingClientRect();
+    return {
+      above: back.bottom <= card.top + 1,
+      backWidth: back.width,
+      cardWidth: card.width,
+    };
+  });
+  expect(placed.above).toBe(true);
+  expect(Math.abs(placed.backWidth - placed.cardWidth)).toBeLessThan(2);
 });

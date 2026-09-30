@@ -16,14 +16,24 @@ function playStory() {
   showToast('📺 Playing: "The Art of Nothing" (3 min)');
 }
 
-function handleSignup() {
-  const email = document.getElementById('emailInput').value;
-  if (email && email.includes('@')) {
+const newsletter = document.getElementById('newsletterForm');
+if (newsletter && window.Breezy && Breezy.formField) {
+  const emailInput = document.getElementById('emailInput');
+  const emailField = Breezy.formField.attach(emailInput, {
+    validate: () => Breezy.validation.email(emailInput.value).error,
+    errorEl: document.getElementById('emailInput-error'),
+    debounceMs: 1000,
+  });
+  newsletter.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!emailField.validateNow()) {
+      emailInput.focus();
+      return;
+    }
     showToast('🎉 Welcome to Breezy! Check your inbox (or just inhale).');
-    document.getElementById('emailInput').value = '';
-  } else {
-    showToast('⚠️ Please enter a valid email. We need it for... air reasons.');
-  }
+    emailInput.value = '';
+    emailField.clear();
+  });
 }
 
 function toggleFaq(btn) {
@@ -36,39 +46,66 @@ function toggleFaq(btn) {
   }
 }
 
-// MORE dropdown
+function setExpanded(btn, open) {
+  if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
 function toggleMore() {
   const btn = document.querySelector('.more-btn');
   const dd = document.getElementById('moreDropdown');
   btn.classList.toggle('open');
   dd.classList.toggle('open');
+  setExpanded(btn, btn.classList.contains('open'));
 }
-// Close MORE on outside click
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.more-wrap')) {
-    document.querySelector('.more-btn')?.classList.remove('open');
+
+document.addEventListener('click', event => {
+  if (!event.target.closest('.more-wrap')) {
+    const btn = document.querySelector('.more-btn');
+    btn?.classList.remove('open');
     document.getElementById('moreDropdown')?.classList.remove('open');
+    setExpanded(btn, false);
   }
 });
 
-// Mobile menu
 function toggleMobileMenu() {
   const btn = document.getElementById('hamburgerBtn');
   const menu = document.getElementById('mobileMenu');
   btn.classList.toggle('open');
   menu.classList.toggle('open');
-  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
-}
-function closeMobile() {
-  document.getElementById('hamburgerBtn').classList.remove('open');
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.body.style.overflow = '';
+  const open = menu.classList.contains('open');
+  document.body.style.overflow = open ? 'hidden' : '';
+  setExpanded(btn, open);
 }
 
-// Smooth scroll for nav links
+function closeMobile() {
+  const btn = document.getElementById('hamburgerBtn');
+  btn.classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.body.style.overflow = '';
+  setExpanded(btn, false);
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  const menu = document.getElementById('mobileMenu');
+  if (menu && menu.classList.contains('open')) {
+    closeMobile();
+    document.getElementById('hamburgerBtn').focus();
+    return;
+  }
+  const more = document.getElementById('moreDropdown');
+  if (more && more.classList.contains('open')) {
+    const btn = document.querySelector('.more-btn');
+    more.classList.remove('open');
+    btn.classList.remove('open');
+    setExpanded(btn, false);
+    btn.focus();
+  }
+});
+
 document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
+  a.addEventListener('click', event => {
+    event.preventDefault();
     const target = document.querySelector(a.getAttribute('href'));
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });

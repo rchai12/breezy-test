@@ -27,6 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (state.account) showSignedIn(state.account);
 
   let submitting = false;
+  const backLinks = document.querySelectorAll('.back-to-plans');
+  backLinks.forEach(link => {
+    link.href = `plans.html?plan=${state.planId}`;
+    link.addEventListener('click', event => {
+      if (submitting) event.preventDefault();
+    });
+  });
+
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (submitting) return;
@@ -39,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     submitting = true;
+    setBackDisabled(true);
     formError.hidden = true;
     formError.textContent = '';
     submitBtn.disabled = true;
@@ -87,10 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     submitting = false;
+    setBackDisabled(false);
     submitBtn.disabled = false;
     submitBtn.textContent = 'Create account';
     form.removeAttribute('aria-busy');
   });
+
+  function setBackDisabled(disabled) {
+    backLinks.forEach(link => {
+      link.classList.toggle('is-disabled', disabled);
+      if (disabled) link.setAttribute('aria-disabled', 'true');
+      else link.removeAttribute('aria-disabled');
+    });
+  }
 
   function wireFields() {
     const confirmField = Breezy.formField.attach(confirmEl, {

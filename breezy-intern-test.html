@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/home.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -22,14 +23,14 @@
 
   <!-- Mid bar: logo + secondary links -->
   <div class="mid-bar">
-    <div class="nav-brand"><em>Breezy</em>&thinsp;™</div>
+    <a class="nav-brand" href="#hero" aria-label="Breezy, back to top"><em>Breezy</em>&thinsp;™</a>
     <div class="mid-links">
       <div class="account-slot" id="accountSlot"></div>
       <a href="#">Locations <span style="font-size:0.6rem;">▾</span></a>
       <a href="#">Rewards Club</a>
       <a href="signup/plans.html" class="book-btn">Book Air <span style="font-size:0.6rem;">▾</span></a>
     </div>
-    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -48,7 +49,7 @@
       <a href="#">Promotions</a>
     </div>
     <div class="more-wrap">
-      <button class="more-btn" onclick="toggleMore()">
+      <button class="more-btn" onclick="toggleMore()" aria-expanded="false" aria-controls="moreDropdown">
         More <span class="more-arrow">▼</span>
       </button>
       <div class="more-dropdown" id="moreDropdown">
@@ -78,10 +79,8 @@
   <a href="#">Locations</a>
   <a href="#">Rewards Club</a>
   <a href="signup/plans.html">Book Air</a>
-</div><article id="post-2" class="post-2 page type-page status-publish hentry">
-<header class="header">
-<h1 class="entry-title" itemprop="name">Home</h1> </header>
-<div class="entry-content" itemprop="mainContentOfPage">
+</div>
+<main id="main">
 
 <!-- HERO -->
 <section class="hero" id="hero">
@@ -277,19 +276,20 @@
     <div class="nl-box">
       <h2>Ready to breathe different?</h2>
       <p>Join 12,847 breathers. Get weekly air quality insights and exclusive nostril tips.</p>
-      <div class="nl-form">
-        <input type="email" placeholder="you@breathe.io" id="emailInput">
-        <button class="btn btn-primary" onclick="handleSignup()">Subscribe Free →</button>
-      </div>
-      <p style="font-size:0.75rem; color:var(--slate-500); margin-top:14px;">No spam. Just air. Unsubscribe by holding your breath for 60 seconds.</p>
+      <form class="nl-form" id="newsletterForm" novalidate>
+        <div class="nl-field">
+          <label for="emailInput" class="visually-hidden">Email address</label>
+          <input type="email" placeholder="you@breathe.io" id="emailInput" autocomplete="email" inputmode="email">
+          <p class="nl-error" id="emailInput-error" aria-live="polite"></p>
+        </div>
+        <button type="submit" class="btn btn-primary">Subscribe Free →</button>
+      </form>
+      <p style="font-size:0.75rem; color:var(--slate-400); margin-top:14px;">No spam. Just air. Unsubscribe by holding your breath for 60 seconds.</p>
     </div>
   </div>
 </section>
 
-<p></p>
-<div class="entry-links"></div>
-</div>
-</article>
+</main>
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -334,6 +334,9 @@
 
 <script src="js/plans-data.js"></script>
 <script src="js/flow-state.js"></script>
+<script src="js/card-format.js"></script>
+<script src="js/validation.js"></script>
+<script src="js/components/form-field.js"></script>
 <script src="js/home-pricing.js"></script>
 <script src="js/home-account.js"></script>
 <script src="js/home.js"></script>

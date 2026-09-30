@@ -59,7 +59,7 @@ h1, h2, h3, h4 {
   gap: 6px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--slate-500);
+  color: var(--slate-600);
   text-align: center;
 }
 
@@ -86,19 +86,19 @@ h1, h2, h3, h4 {
 
 .steps-indicator li.is-complete::before {
   content: "✓";
-  background: var(--emerald-500);
-  border-color: var(--emerald-500);
+  background: #047857;
+  border-color: #047857;
   color: #fff;
 }
 
 .steps-indicator li[aria-current="step"] {
-  color: var(--sky-500);
+  color: var(--sky-700);
 }
 
 .steps-indicator li[aria-current="step"]::before {
   content: counter(step);
-  background: var(--sky-500);
-  border-color: var(--sky-500);
+  background: var(--sky-700);
+  border-color: var(--sky-700);
   color: #fff;
 }
 
@@ -151,15 +151,15 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary {
-  background: var(--sky-500);
+  background: var(--sky-700);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(14,165,233,0.35);
+  box-shadow: 0 4px 16px rgba(3,105,161,0.35);
 }
 
 .btn-primary:hover {
-  background: var(--sky-600);
+  background: #075985;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(14,165,233,0.4);
+  box-shadow: 0 8px 24px rgba(3,105,161,0.4);
 }
 
 .btn-secondary {
@@ -174,15 +174,20 @@ h1, h2, h3, h4 {
 }
 
 .btn:disabled,
-.btn[aria-disabled="true"] {
+.btn[aria-disabled="true"],
+.btn.is-disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
+.btn.is-disabled {
+  pointer-events: none;
+}
+
 .btn-primary:disabled:hover,
 .btn-primary[aria-disabled="true"]:hover {
-  background: var(--sky-500);
+  background: var(--sky-700);
   transform: none;
   box-shadow: 0 4px 16px rgba(14,165,233,0.35);
 }
@@ -342,7 +347,7 @@ h1, h2, h3, h4 {
 .plan-card-interval {
   font-size: 0.85rem;
   font-weight: 400;
-  color: var(--slate-500);
+  color: var(--slate-600);
 }
 
 .popular-badge,
@@ -361,7 +366,7 @@ h1, h2, h3, h4 {
 }
 
 .trial-badge {
-  color: var(--emerald-500);
+  color: #047857;
   background: rgba(16, 185, 129, 0.12);
 }
 
@@ -586,7 +591,7 @@ h1, h2, h3, h4 {
 }
 
 .plan-reminder a {
-  color: var(--sky-600);
+  color: var(--sky-700);
 }
 
 .register-form {
@@ -634,7 +639,7 @@ h1, h2, h3, h4 {
 .signup-card .field-error {
   margin: 6px 0 0;
   font-size: 0.85rem;
-  color: var(--rose-500);
+  color: #be123c;
 }
 
 .field-error:empty {
@@ -659,7 +664,7 @@ h1, h2, h3, h4 {
   padding: 0 8px;
   border: 0;
   background: none;
-  color: var(--sky-600);
+  color: var(--sky-700);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -738,7 +743,7 @@ h1, h2, h3, h4 {
 
 .signup-card .form-error {
   background: rgba(244, 63, 94, 0.1);
-  color: var(--rose-500);
+  color: #be123c;
   border: 1px solid var(--rose-500);
   border-radius: var(--radius);
   padding: 12px 16px;
@@ -749,6 +754,11 @@ h1, h2, h3, h4 {
   background: var(--sky-50);
   border-radius: var(--radius);
   padding: 20px;
+  color: var(--slate-700);
+}
+
+.signup-card .signed-in-panel p {
+  color: var(--slate-700);
 }
 
 .signed-in-panel .btn {
@@ -759,10 +769,14 @@ h1, h2, h3, h4 {
   border: 0;
   background: none;
   padding: 0;
-  color: var(--sky-600);
+  color: var(--sky-700);
   font: inherit;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.signup-main > .back-to-plans {
+  margin-bottom: 16px;
 }
 
 @media (max-width: 480px) {
@@ -771,7 +785,8 @@ h1, h2, h3, h4 {
   }
 
   .register-form .btn,
-  .payment-form .btn {
+  .payment-form .btn,
+  .signup-main > .back-to-plans {
     width: 100%;
   }
 }
@@ -885,7 +900,7 @@ h1, h2, h3, h4 {
 }
 
 .summary-plan a {
-  color: var(--sky-600);
+  color: var(--sky-700);
 }
 
 .signup-card .summary-price,

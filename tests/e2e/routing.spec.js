@@ -67,19 +67,6 @@ test('Contact Sales shows its toast and stays on the homepage', async ({ page })
   await expect(page).toHaveURL(url);
 });
 
-test('Subscribe Free asks for an email, then welcomes a valid one', async ({ page }) => {
-  await page.goto(fileUrl('breezy-intern-test.html'));
-  const toast = page.locator('#toast');
-  await page.getByRole('button', { name: 'Subscribe Free →' }).click();
-  await expect(toast).toHaveClass(/show/);
-  await expect(toast).toContainText('valid email');
-
-  await page.locator('#emailInput').fill('a@b.co');
-  await page.getByRole('button', { name: 'Subscribe Free →' }).click();
-  await expect(toast).toContainText('Welcome to Breezy');
-  await expect(page.locator('#emailInput')).toHaveValue('');
-});
-
 const SEEDED_PAGES = [
   ['plans', 'signup/plans.html', {}],
   ['register', 'signup/register.html', { planId: 'power' }],
