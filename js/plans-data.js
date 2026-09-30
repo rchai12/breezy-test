@@ -114,21 +114,31 @@
     return `$${dollars.toFixed(2)}`;
   }
 
-  Breezy.plans = { list, comparison, get, formatPrice };
-
-  // Log bad comparison rows. Do not throw.
-  const planIds = list.map(plan => plan.id);
-  comparison.forEach(row => {
-    planIds.forEach(planId => {
-      const values = row.values;
-      if (!values || !Object.prototype.hasOwnProperty.call(values, planId)) {
-        console.error(`Comparison row "${row.id}" is missing plan id "${planId}"`);
-        return;
-      }
-      const value = values[planId];
-      if (value !== true && value !== false && typeof value !== 'string') {
-        console.error(`Comparison row "${row.id}" has an invalid value for "${planId}"`);
-      }
+  /**
+   * Returns an array of error messages for comparison rows with missing or invalid values.
+   * @param {Array<object>} rows
+   * @returns {string[]}
+   */
+  function findDataErrors(rows) {
+    const planIds = list.map(plan => plan.id);
+    const errors = [];
+    rows.forEach(row => {
+      planIds.forEach(planId => {
+        const values = row.values;
+        if (!values || !Object.prototype.hasOwnProperty.call(values, planId)) {
+          errors.push(`Comparison row "${row.id}" is missing plan id "${planId}"`);
+          return;
+        }
+        const value = values[planId];
+        if (value !== true && value !== false && typeof value !== 'string') {
+          errors.push(`Comparison row "${row.id}" has an invalid value for "${planId}"`);
+        }
+      });
     });
-  });
+    return errors;
+  }
+
+  Breezy.plans = { list, comparison, get, formatPrice, _findDataErrors: findDataErrors };
+
+  findDataErrors(comparison).forEach(msg => console.error(msg));
 })();
